@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../features/home/data/models/message_page_extra.dart';
 import '../features/home/presentation/pages/messages.dart';
 import '../features/home/presentation/screens/home.dart';
 import 'app_route_path.dart';
@@ -21,7 +24,9 @@ class AppRouteConf {
             path: AppRoute.messages.path,
             name: AppRoute.messages.name,
             builder: (_, state) {
-              return MessagesPage();
+              final data = MessagePageExtraModel.fromJson(
+                  json.decode(state.extra as String));
+              return MessagesPage(data: data);
             },
           ),
         ],

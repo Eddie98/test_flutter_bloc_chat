@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:test_flutter_bloc_chat/src/core/extensions/integer_sizedbox_extension.dart';
+import 'package:test_flutter_bloc_chat/src/features/home/data/models/message.dart';
+import 'package:test_flutter_bloc_chat/src/features/home/data/models/user.dart';
 
 import '../../../../core/blocs/theme/theme_bloc.dart';
 import '../../../../core/constants/others.dart';
 import '../../../../core/themes/app_color.dart';
 import '../../data/models/chat.dart';
+import 'avatar.dart';
 
 class ChatItem extends StatelessWidget {
   const ChatItem({
@@ -19,86 +22,127 @@ class ChatItem extends StatelessWidget {
 
   final int index;
   final ChatModel item;
-  final VoidCallback callback;
-
-  static final List<Color> _avatarColors = [
-    AppColors.green1,
-    AppColors.orange1,
-    AppColors.blue1,
-  ];
+  final void Function({
+    required UserModel user,
+  }) callback;
 
   @override
   Widget build(BuildContext context) {
     final isDarkMode = context.read<ThemeBloc>().state.isDarkMode;
     final otherUser = item.users.singleWhere((e) => e.id != myId);
 
-    String message = '';
-
-    if (item.messages.isNotEmpty) {
-      final fwefew = item.messages.last.text;
-    }
-
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 10.w),
-      child: Row(
-        children: [
-          Container(
-            width: 50.w,
-            height: 50.w,
-            decoration: BoxDecoration(
-              color: _avatarColors[index % _avatarColors.length],
-              shape: BoxShape.circle,
+    return GestureDetector(
+      onTap: () => callback(user: otherUser),
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 10.w),
+        color: Colors.transparent,
+        child: Stack(
+          alignment: Alignment.topRight,
+          children: [
+            Row(
+              children: [
+                AvatarWidget(index: index, user: otherUser),
+                12.wS,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        otherUser.name,
+                        maxLines: 2,
+                        style: TextStyle(
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w600,
+                          color: isDarkMode ? Colors.white : Colors.black,
+                        ),
+                      ),
+                      if (item.messages.isNotEmpty)
+                        _SubTitleWidget(message: item.messages.last),
+                    ],
+                  ),
+                )
+              ],
             ),
-            alignment: Alignment.center,
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                '${otherUser.name.split(' ')[0][0]}${otherUser.name.split(' ')[1][0]}',
-                style: TextStyle(
-                  fontSize: 20.sp,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
+            if (item.messages.isNotEmpty)
+              Positioned(
+                child: _TimeAgoWidget(
+                  timestamp: item.messages.last.createdAt,
                 ),
               ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SubTitleWidget extends StatelessWidget {
+  const _SubTitleWidget({required this.message});
+
+  final MessageModel message;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDarkMode = context.read<ThemeBloc>().state.isDarkMode;
+
+    String text =
+        message.text.isEmpty && message.image != null ? '🖼️' : message.text;
+    bool isMe = message.authorId == myId;
+
+    return RichText(
+      maxLines: 2,
+      text: TextSpan(
+        children: [
+          TextSpan(
+            text: isMe ? '' : '${'you'.tr()}: ',
+            style: TextStyle(
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w500,
+              color: isDarkMode ? Colors.white : Colors.black,
             ),
           ),
-          12.wS,
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                otherUser.name,
-                style: TextStyle(
-                  fontSize: 15.sp,
-                  fontWeight: FontWeight.w600,
-                  color: isDarkMode ? Colors.white : Colors.black,
-                ),
-              ),
-              RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: '${'you'.tr()}: ',
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w500,
-                        color: isDarkMode ? Colors.white : Colors.black,
-                      ),
-                    ),
-                    TextSpan(
-                      text: message,
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.grey2,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          )
+          TextSpan(
+            text: text,
+            style: TextStyle(
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w500,
+              color: AppColors.grey2,
+            ),
+          ),
         ],
+      ),
+    );
+  }
+}
+
+class _TimeAgoWidget extends StatelessWidget {
+  const _TimeAgoWidget({required this.timestamp});
+
+  final int timestamp;
+
+  @override
+  Widget build(BuildContext context) {
+    final now = DateTime.now();
+    final dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
+    final diff = now.difference(dateTime);
+
+    if (diff.inHours < 1) {
+      return buildText(context.plural('minutes_ago', diff.inMinutes));
+    } else if (diff.inHours >= 1 && diff.inHours < 24) {
+      return buildText(DateFormat('HH:mm').format(dateTime));
+    } else if (diff.inHours >= 24 && diff.inHours < 48) {
+      return buildText('yesterday'.tr());
+    }
+    return buildText(DateFormat('dd:MM:yy').format(dateTime));
+  }
+
+  Widget buildText(String value) {
+    return Text(
+      value,
+      style: TextStyle(
+        fontSize: 12.sp,
+        fontWeight: FontWeight.w500,
+        color: AppColors.grey2,
       ),
     );
   }

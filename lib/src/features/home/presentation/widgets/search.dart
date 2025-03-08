@@ -22,8 +22,6 @@ class SearchWidget extends StatefulWidget {
 class _SearchWidgetState extends State<SearchWidget> {
   final textController = TextEditingController();
 
-  String searchText = '';
-
   @override
   void dispose() {
     textController.dispose();
@@ -57,14 +55,7 @@ class _SearchWidgetState extends State<SearchWidget> {
               controller: textController,
               keyboardType: TextInputType.text,
               textInputAction: TextInputAction.search,
-              onEditingComplete: () => widget.callback(searchText),
-              onChanged: (val) {
-                if (mounted) {
-                  setState(() {
-                    searchText = val;
-                  });
-                }
-              },
+              onEditingComplete: () => widget.callback(textController.text.trim()),
               style: TextStyle(
                 fontSize: 16.0.sp,
                 fontWeight: FontWeight.w500,
