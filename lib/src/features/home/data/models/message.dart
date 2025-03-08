@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:equatable/equatable.dart';
 
 class MessageModel extends Equatable {
@@ -7,7 +5,7 @@ class MessageModel extends Equatable {
   final int authorId;
   final int createdAt;
   final String text;
-  final File? image;
+  final String? image;
   final bool isRead;
 
   const MessageModel({

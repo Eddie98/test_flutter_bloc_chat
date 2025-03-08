@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
@@ -13,11 +12,11 @@ import 'src/core/utils/observer.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-   await EasyLocalization.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
 
   await Future.wait([
     Hive.initFlutter(),
-      getTemporaryDirectory().then((dir) async {
+    getTemporaryDirectory().then((dir) async {
       HydratedBloc.storage = await HydratedStorage.build(
         storageDirectory: HydratedStorageDirectory(dir.path),
       );
@@ -39,4 +38,3 @@ void main() async {
     ),
   );
 }
-

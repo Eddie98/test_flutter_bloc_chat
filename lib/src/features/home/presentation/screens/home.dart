@@ -4,13 +4,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:test_flutter_bloc_chat/src/core/constants/spacings.dart';
 import 'package:test_flutter_bloc_chat/src/core/extensions/integer_sizedbox_extension.dart';
+import 'package:test_flutter_bloc_chat/src/features/home/data/models/user.dart';
 import 'package:test_flutter_bloc_chat/src/widgets/loading_widget.dart';
 
 import '../../../../configs/injector/injector_conf.dart';
 import '../../../../core/blocs/theme/theme_bloc.dart';
 import '../../../../core/themes/app_color.dart';
 import '../../../../routes/app_route_conf.dart';
+import '../../../../routes/app_route_path.dart';
 import '../../../../widgets/snackbar_widget.dart';
+import '../../data/models/message_page_extra.dart';
 import '../bloc/home/home_bloc.dart';
 import '../widgets/chat_item.dart';
 import '../widgets/search.dart';
@@ -59,7 +62,8 @@ class HomeScreen extends StatelessWidget {
             ),
             Expanded(
               child: RefreshIndicator(
-                onRefresh: () async => getIt<HomeBloc>().add(GetChatsEvent()),
+                onRefresh: () async =>
+                    context.read<HomeBloc>().add(GetChatsEvent()),
                 child: BlocConsumer<HomeBloc, HomeState>(
                   listener: (context, state) {
                     if (state is GetChatsFailureState) {
@@ -80,10 +84,23 @@ class HomeScreen extends StatelessWidget {
                           height: 0.0,
                         ),
                         itemBuilder: (_, i) {
+                          final el = chats[i];
+
                           return ChatItem(
                             index: i,
-                            item: chats[i],
-                            callback: () {},
+                            item: el,
+                            callback: ({required UserModel user}) {
+                              final data = MessagePageExtraModel(
+                                index: i,
+                                user: user,
+                                isOnline: user.isOnline,
+                                messages: el.messages,
+                              );
+                              router.pushNamed(
+                                AppRoute.messages.path,
+                                extra: data.toJson(),
+                              );
+                            },
                           );
                         },
                       );
