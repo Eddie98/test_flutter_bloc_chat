@@ -1,6 +1,6 @@
 // --- images
 
-const mountainImage = 'assets/images/search_page_blue_background.jpg';
+const mountainImage = 'assets/images/the-mountain.png';
 
 // --------------------------------
 

@@ -39,11 +39,14 @@ List<MessageModel> generateMessages(List<int> users) {
 
     final hasImage = random.nextDouble() < 0.5;
     final text = sampleMessages[random.nextInt(sampleMessages.length)];
+    final imageText = random.nextDouble() < 0.5
+        ? ''
+        : sampleMessages[random.nextInt(sampleMessages.length)];
 
     return MessageModel(
       id: i,
       authorId: users[random.nextInt(users.length)],
-      text: hasImage ? '' : text,
+      text: hasImage ? imageText : text,
       createdAt: timestamp,
       image: hasImage ? mountainImage : null,
       isRead: random.nextBool(),

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:test_flutter_bloc_chat/src/core/extensions/integer_sizedbox_extension.dart';
-import 'package:test_flutter_bloc_chat/src/core/utils/logger.dart';
 
 import '../../../../core/blocs/theme/theme_bloc.dart';
 import '../../../../core/constants/spacings.dart';
@@ -11,6 +10,7 @@ import '../../../../core/themes/app_color.dart';
 import '../../../../widgets/leading_back_button_widget.dart';
 import '../../data/models/message_page_extra.dart';
 import '../widgets/avatar.dart';
+import '../widgets/message_item.dart';
 
 class MessagesPage extends StatelessWidget {
   const MessagesPage({super.key, required this.data});
@@ -28,6 +28,7 @@ class MessagesPage extends StatelessWidget {
         elevation: 0.0,
         leading: AppBackButton(),
         titleSpacing: 0.0,
+        toolbarHeight: 74.h,
         title: Row(
           children: [
             AvatarWidget(
@@ -60,16 +61,30 @@ class MessagesPage extends StatelessWidget {
         ),
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(
-            horizontal: defaultHorPadding.w,
+        child: ListView.separated(
+          itemCount: data.messages.length,
+          separatorBuilder: (_, index) {
+            final el = data.messages[index];
+
+            if (index < data.messages.length - 1) {
+              final nextEl = data.messages[index + 1];
+              if (el.authorId == nextEl.authorId) {
+                return 6.hS;
+              }
+            }
+
+            return 20.hS;
+          },
+          padding: EdgeInsets.only(
+            left: 10.w,
+            right: 10.w,
+            top: 22.h,
+            bottom: defaultBottomPadding.h,
           ),
-          child: Column(
-            children: [
-              22.hS,
-              defaultBottomPadding.toInt().hS,
-            ],
-          ),
+          itemBuilder: (context, index) {
+            final el = data.messages[index];
+            return MessageItem(item: el);
+          },
         ),
       ),
     );
