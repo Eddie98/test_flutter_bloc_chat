@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "/Users/eddie/Development/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/eddie/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/eddie/TestProjects/test_flutter_bloc_chat/android/app/.cxx/RelWithDebInfo/6e654f2v/armeabi-v7a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/eddie/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/eddie/TestProjects/test_flutter_bloc_chat/android/app/.cxx/RelWithDebInfo/6e654f2v/armeabi-v7a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}
