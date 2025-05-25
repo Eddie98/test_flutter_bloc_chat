@@ -20,6 +20,7 @@ class MessageItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     final isDarkMode = context.read<ThemeBloc>().state.isDarkMode;
     final createdAt = DateTime.fromMillisecondsSinceEpoch(item.createdAt);
     final sentAt = DateFormat('HH:mm').format(createdAt);
@@ -39,6 +40,10 @@ class MessageItem extends StatelessWidget {
                 : AppColors.grey1,
         radius: Radius.circular(21.r),
         padding: BubbleEdges.all(0),
+        margin: BubbleEdges.only(
+          left: isMe ? size.width / 6 : 0.0,
+          right: isMe ? 0.0 : size.width / 6,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
